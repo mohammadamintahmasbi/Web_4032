@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+    <style>
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>User Information Form</h1>
+    <form id="userForm">
+        <div>
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+        </div>
+        <div>
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="responseMessage"></div>
+
+    <script>
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+                age: parseInt(document.getElementById('age').value)
+            };
+            
+            // Create AJAX request
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:8000/api/form/send', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onload = function() {
+                const responseDiv = document.getElementById('responseMessage');
+                
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        responseDiv.innerHTML = `<p class="success">Success: ${response.message || 'Data saved successfully'}</p>`;
+                        document.getElementById('userForm').reset();
+                    } else {
+                        responseDiv.innerHTML = `<p class="error">Error: ${response.error || 'Unknown error occurred'}</p>`;
+                    }
+                } catch (e) {
+                    responseDiv.innerHTML = `<p class="error">Error parsing server response</p>`;
+                }
+            };
+            
+            xhr.onerror = function() {
+                document.getElementById('responseMessage').innerHTML = 
+                    '<p class="error">Request failed. Please check your connection.</p>';
+            };
+            
+            xhr.send(JSON.stringify(formData));
+        });
+    </script>
+</body>
+</html>
