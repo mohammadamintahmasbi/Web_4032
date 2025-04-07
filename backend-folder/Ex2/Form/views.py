@@ -1,9 +1,14 @@
 from django.shortcuts import render
 from rest_framework.generics import CreateAPIView, ListAPIView
-# Create your views here.
+from rest_framework.permissions import AllowAny
 
+from .serializers import FormSerializer
+from .models import Form
 class SendForm(CreateAPIView):
-    pass
-
+    queryset = Form.objects.all()
+    serializer_class = FormSerializer
+    permission_classes = AllowAny
 class GetForm(ListAPIView):
-    pass
+    queryset = Form.objects.all()
+    serializer_class = FormSerializer
+    permission_classes = AllowAny
