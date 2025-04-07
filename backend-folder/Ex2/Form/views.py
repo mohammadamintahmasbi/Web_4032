@@ -7,8 +7,8 @@ from .models import Form
 class SendForm(CreateAPIView):
     queryset = Form.objects.all()
     serializer_class = FormSerializer
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
 class GetForm(ListAPIView):
     queryset = Form.objects.all()
     serializer_class = FormSerializer
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
