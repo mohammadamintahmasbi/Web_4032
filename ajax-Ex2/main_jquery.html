@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <h2>Education Form</h2>
+    <form id="educationForm">
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="education_degree">Education Degree:</label>
+            <select id="education_degree" name="education_degree">
+                <option value="">-- Select Degree --</option>
+                <option value="Bachelor">Bachelor</option>
+                <option value="Master">Master</option>
+                <option value="PH.D">PH.D</option>
+            </select>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+    
+    <div id="response-message"></div>
+    
+    <script>
+        $(document).ready(function() {
+            $('#educationForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                var formData = {
+                    'first_name': $('#first_name').val(),
+                    'last_name': $('#last_name').val(),
+                    'age': $('#age').val(),
+                    'education_degree': $('#education_degree').val()
+                };
+                
+                // AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8000/api/form/send',  // این مقدار را میتوانید با آدرس خود جایگرین کنید
+                    data: formData,
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')  // Required for Django CSRF protection
+                    },
+                    success: function(response) {
+                        $('#response-message').removeClass('error').addClass('success').text('Form submitted successfully!').show();
+                        $('#educationForm')[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = 'Error submitting form: ';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage += xhr.responseJSON.error;
+                        } else {
+                            errorMessage += error;
+                        }
+                        $('#response-message').removeClass('success').addClass('error').text(errorMessage).show();
+                    }
+                });
+            });
+            
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+</body>
+</html>
