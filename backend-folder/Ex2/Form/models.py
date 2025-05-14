@@ -8,7 +8,7 @@ class Form(models.Model):
         MASTER = 'Master', _('Master')
         PH_D = 'PH.D', _('PH.D')
         
-    first_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30, null=False, blank=False)
     last_name = models.CharField(max_length=30)
     age = models.IntegerField()
     education_degree = models.CharField(
